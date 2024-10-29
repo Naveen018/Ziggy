@@ -6,7 +6,10 @@ from vendor.forms import VendorForm
 
 # Create your views here.
 def registerVendor(request):
-    if request.method == "POST":
+    if request.user.is_authenticated:
+        messages.warning(request, "You are already logged in")
+        return redirect('myAccount')
+    elif request.method == "POST":
         # print(request.POST)
         form = UserForm(request.POST)
         vendor_form = VendorForm(request.POST, request.FILES)
