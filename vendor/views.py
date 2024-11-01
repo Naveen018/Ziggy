@@ -2,6 +2,7 @@ from django.shortcuts import redirect, render
 from django.contrib import messages
 from accounts.forms import UserForm
 from accounts.models import User, UserProfile
+from accounts.utils import send_verification_email
 from vendor.forms import VendorForm
 
 # Create your views here.
@@ -22,6 +23,8 @@ def registerVendor(request):
             user.role = User.RESTAURANT
             user.save()
 
+            send_verification_email(request, user)
+            
             vendor = vendor_form.save(commit=False)
             vendor.user = user
             user_profile = UserProfile.objects.get(user=user)
@@ -29,7 +32,7 @@ def registerVendor(request):
             # vendor_name = vendor_form.cleaned_data["vendor_name"]
             vendor.save()
             
-            messages.success(request, "Your account has been registered successfully!! Please wait for the approval")
+            messages.success(request, "Account registered! Check your email to activate your account and Please wait for the approval")
             return redirect('registerVendor')
         else:
             messages.error(request, "Invalid Form!!")
